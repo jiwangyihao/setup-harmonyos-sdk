@@ -117,20 +117,6 @@ async function run() {
 		await tc.extractZip(arkuixPath, sdkHome);
 		core.info("ArkUI-X extracted to " + sdkHome);
 
-		// check if arkui-x/licenses exists and if not, create it
-		const licensesPath = path.join(sdkHome, "arkui-x", "licenses");
-		if (!fs.existsSync(licensesPath)) {
-			fs.mkdirSync(licensesPath, { recursive: true });
-			core.info("Created licenses directory for ArkUI-X.");
-		}
-
-		// check if sdkHome/sdk/default/licenses exists and if not, create it
-		const sdkDefaultLicensesPath = path.join(
-			sdkHome,
-			"sdk",
-			"default",
-			"licenses",
-		);
 		if (!fs.existsSync(sdkDefaultLicensesPath)) {
 			fs.mkdirSync(sdkDefaultLicensesPath, { recursive: true });
 			core.info("Created licenses directory for default SDK.");
@@ -168,6 +154,26 @@ async function run() {
 		} else {
 			core.setFailed("ArkUI-X source path does not exist: " + arkuixSourcePath);
 			return;
+		}
+
+		// check if arkui-x-sdk/licenses exists and create it if not
+		const sdkDefaultLicensesPath = path.join(
+			sdkHome,
+			"arkui-x-sdk",
+			arkuiXConfig.apiVersion,
+			"arkui-x",
+			"licenses",
+		);
+		if (!fs.existsSync(sdkDefaultLicensesPath)) {
+			fs.mkdirSync(sdkDefaultLicensesPath, { recursive: true });
+			core.info("Created licenses directory for ArkUI-X SDK.");
+		}
+
+		// check if sdkHome/sdk/licenses exists and create it if not
+		const sdkLicensesPath = path.join(sdkHome, "sdk", "licenses");
+		if (!fs.existsSync(sdkLicensesPath)) {
+			fs.mkdirSync(sdkLicensesPath, { recursive: true });
+			core.info("Created licenses directory for SDK.");
 		}
 
 		// Set up ArkUI-X environment
