@@ -2,6 +2,7 @@ const core = require("@actions/core");
 const tc = require("@actions/tool-cache"); // 引入 @actions/tool-cache
 const os = require("node:os");
 const path = require("node:path");
+const exec = require("@actions/exec");
 
 // os.platform() 返回 'darwin', 'linux' 等
 const osmap = {
@@ -53,9 +54,43 @@ async function run() {
 		await tc.extractZip(sdkZipPath, sdkRoot);
 		core.info("SDK downloaded and extracted to " + sdkRoot);
 
+		core.info("Setting up HarmonyOS SDK environment...");
 		core.setOutput("sdk-path", sdkHome);
 		core.exportVariable("HOS_SDK_HOME", sdkHome);
+		core.exportVariable("COMMANDLINE_TOOL_DIR", sdkHome);
 		core.addPath(sdkBin);
+
+		core.exportVariable("NODE_HOME", path.join(sdkHome, "tool/node"));
+		core.addPath(path.join(sdkHome, "tool/node/bin"));
+
+		core.exportVariable(
+			"HDC_HOME",
+			path.join(sdkHome, "sdk/default/openharmony/toolchains"),
+		);
+		core.addPath(path.join(sdkHome, "sdk/default/openharmony/toolchains"));
+
+		await exec.exec("npm", [
+			"config",
+			"set",
+			"registry",
+			"https://repo.huaweicloud.com/repository/npm/",
+		]);
+		await exec.exec("npm", [
+			"config",
+			"set",
+			"@ohos:registry",
+			"https://repo.harmonyos.com/npm/",
+		]);
+
+		await exec.exec("ohpm", [
+			"config",
+			"set",
+			"registry",
+			"https://ohpm.openharmony.cn/ohpm/",
+		]);
+		await exec.exec("ohpm", ["config", "set", "strict_ssl", "false"]);
+
+		core.info("HarmonyOS SDK setup completed successfully.");
 	} catch (error) {
 		core.setFailed(error.message);
 	}
