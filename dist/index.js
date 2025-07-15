@@ -6103,17 +6103,23 @@ async function run() {
 		await tc.extractZip(arkuixPath, sdkHome);
 		core.info("ArkUI-X extracted to " + sdkHome);
 
-		// check if arkui-x/licenses or arkui-x/LICENSE exists and if arkui-x/licenses not exists, copy LICENSE to licenses
+		// check if arkui-x/licenses exists and if not, create it
 		const licensesPath = path.join(sdkHome, "arkui-x", "licenses");
 		if (!fs.existsSync(licensesPath)) {
-			const licensePath = path.join(sdkHome, "arkui-x", "LICENSE");
-			if (fs.existsSync(licensePath)) {
-				fs.mkdirSync(licensesPath, { recursive: true });
-				fs.copyFileSync(licensePath, path.join(licensesPath, "LICENSE"));
-			} else {
-				core.setFailed("ArkUI-X license file not found.");
-				return;
-			}
+			fs.mkdirSync(licensesPath, { recursive: true });
+			core.info("Created licenses directory for ArkUI-X.");
+		}
+
+		// check if sdkHome/sdk/default/licenses exists and if not, create it
+		const sdkDefaultLicensesPath = path.join(
+			sdkHome,
+			"sdk",
+			"default",
+			"licenses",
+		);
+		if (!fs.existsSync(sdkDefaultLicensesPath)) {
+			fs.mkdirSync(sdkDefaultLicensesPath, { recursive: true });
+			core.info("Created licenses directory for default SDK.");
 		}
 
 		const arkuiXConfigPath = path.join(sdkHome, "arkui-x", "arkui-x.json");
