@@ -6138,13 +6138,7 @@ async function run() {
 		}
 
 		// check if arkui-x-sdk/licenses exists and create it if not
-		const sdkArkuixLicensesPath = path.join(
-			sdkHome,
-			"arkui-x-sdk",
-			arkuiXConfig.apiVersion,
-			"arkui-x",
-			"licenses",
-		);
+		const sdkArkuixLicensesPath = path.join(sdkHome, "arkui-x-sdk", "licenses");
 		if (!fs.existsSync(sdkArkuixLicensesPath)) {
 			fs.mkdirSync(sdkArkuixLicensesPath, { recursive: true });
 			core.info("Created licenses directory for ArkUI-X SDK.");
