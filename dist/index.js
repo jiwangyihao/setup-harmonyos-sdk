@@ -6023,7 +6023,9 @@ async function run() {
 			return;
 		}
 
-		const asset = assets.find((a) => a.name.includes(mappedOS));
+		const asset = assets.find(
+			(a) => a.name.includes(mappedOS) && a.name.includes("commandline-tools"),
+		);
 
 		if (!asset) {
 			core.setFailed(
@@ -6080,19 +6082,47 @@ async function run() {
 
 		core.info("HarmonyOS SDK setup completed successfully.");
 
-		core.info("Downloading ArkUIX...");
-		const arkuixPath = await tc.downloadTool(
-			"https://repo.huaweicloud.com/arkui-crossplatform/sdk/5.0.5.111/darwin/arkui-x-darwin-x64-5.0.5.111-Release.zip",
+		const asset_arkuix = assets.find(
+			(a) => a.name.includes(os.platform()) && a.name.includes("arkui-x"),
 		);
 
-		core.info("Extracting ArkUIX...");
-		await tc.extractZip(arkuixPath, sdkHome);
-		core.info("ArkUIX extracted to " + sdkHome);
+		if (!asset_arkuix) {
+			core.setFailed(
+				`Could not find a release asset for ArkUI-X on platform: ${os.platform()}`,
+			);
+			return;
+		}
 
-		core.info("Setting up ArkUIX environment...");
+		const url_arkuix = asset_arkuix.browser_download_url;
+
+		core.info("Downloading ArkUI-X...");
+		const arkuixPath = await tc.downloadTool(url_arkuix);
+
+		core.info("Extracting ArkUI-X...");
+		await tc.extractZip(arkuixPath, sdkHome);
+		core.info("ArkUI-X extracted to " + sdkHome);
+
+		core.info("Setting up ArkUI-X environment...");
 		core.exportVariable("ARKUIX_HOME", path.join(sdkHome, "arkui-x"));
 		core.addPath(path.join(sdkHome, "arkui-x/toolchains/bin"));
-		core.info("ArkUIX setup completed successfully.");
+
+		await exec.exec("ace", [
+			"config",
+			"--arkui-x-sdk",
+			path.join(sdkHome, "arkui-x"),
+			"--openharmony-sdk",
+			path.join(sdkHome, "sdk/default/openharmony"),
+			"--harmonyos-sdk",
+			sdkHome,
+			"--nodejs-dir",
+			path.join(sdkHome, "tool/node"),
+			"--ohpm-dir",
+			path.join(sdkHome, "ohpm"),
+		]);
+
+		await exec.exec("ace", ["check", "-v"]);
+
+		core.info("ArkUI-X setup completed successfully.");
 	} catch (error) {
 		core.setFailed(error.message);
 	}

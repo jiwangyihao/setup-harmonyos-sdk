@@ -119,6 +119,23 @@ async function run() {
 		core.info("Setting up ArkUI-X environment...");
 		core.exportVariable("ARKUIX_HOME", path.join(sdkHome, "arkui-x"));
 		core.addPath(path.join(sdkHome, "arkui-x/toolchains/bin"));
+
+		await exec.exec("ace", [
+			"config",
+			"--arkui-x-sdk",
+			path.join(sdkHome, "arkui-x"),
+			"--openharmony-sdk",
+			path.join(sdkHome, "sdk/default/openharmony"),
+			"--harmonyos-sdk",
+			sdkHome,
+			"--nodejs-dir",
+			path.join(sdkHome, "tool/node"),
+			"--ohpm-dir",
+			path.join(sdkHome, "ohpm"),
+		]);
+
+		await exec.exec("ace", ["check", "-v"]);
+
 		core.info("ArkUI-X setup completed successfully.");
 	} catch (error) {
 		core.setFailed(error.message);
