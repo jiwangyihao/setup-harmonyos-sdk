@@ -1,50 +1,50 @@
 {
-  "name": "@harmonyos-dev/setup-harmonyos-sdk",
-  "description": "Setup Harmony HAP build environment",
-  "version": "0.2.1",
-  "author": "harmonyos-dev authors",
-  "private": true,
-  "homepage": "https://github.com/harmonyos-dev/setup-harmonyos-sdk",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/harmonyos-dev/setup-harmonyos-sdk.git"
-  },
-  "bugs": {
-    "url": "https://github.com/harmonyos-dev/setup-harmonyos-sdk/issues"
-  },
-  "keywords": [
-    "GitHub",
-    "Actions",
-    "HarmonyOS",
-    "SDK"
-  ],
-  "exports": {
-    ".": "./dist/index.js"
-  },
-  "engines": {
-    "node": ">=20"
-  },
-  "scripts": {
-    "bundle": "npm run format:write && npm run package",
-    "format:write": "prettier --write **/*.js",
-    "format:check": "prettier --check **/*.js",
-    "package": "ncc build src/index.js --license licenses.txt",
-    "package:watch": "npm run package -- --watch",
-    "all": "npm run format:write && npm run package"
-  },
-  "license": "MIT",
-  "eslintConfig": {
-    "extends": "./.github/linters/.eslintrc.yml"
-  },
-  "dependencies": {
-    "@actions/core": "^1.11.1",
-    "adm-zip": "^0.5.16"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.28.0",
-    "@babel/eslint-parser": "^7.28.0",
-    "@babel/preset-env": "^7.28.0",
-    "@vercel/ncc": "^0.38.3",
-    "prettier": "^3.6.2"
-  }
+	"name": "@harmonyos-dev/setup-harmonyos-sdk",
+	"description": "Setup Harmony HAP build environment",
+	"version": "2.1.4",
+	"author": "harmonyos-dev authors & jiwangyihao",
+	"private": true,
+	"homepage": "https://github.com/jiwangyihao/setup-harmonyos-sdk",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/jiwangyihao/setup-harmonyos-sdk.git"
+	},
+	"bugs": {
+		"url": "https://github.com/jiwangyihao/setup-harmonyos-sdk/issues"
+	},
+	"keywords": [
+		"GitHub",
+		"Actions",
+		"HarmonyOS",
+		"SDK"
+	],
+	"exports": {
+		".": "./dist/index.js"
+	},
+	"engines": {
+		"node": ">=20"
+	},
+	"scripts": {
+		"bundle": "npm run format:write && npm run package",
+		"format:write": "prettier --write **/*.js",
+		"format:check": "prettier --check **/*.js",
+		"package": "ncc build src/index.js --license licenses.txt",
+		"package:watch": "npm run package -- --watch",
+		"all": "npm run format:write && npm run package"
+	},
+	"license": "MIT",
+	"eslintConfig": {
+		"extends": "./.github/linters/.eslintrc.yml"
+	},
+	"dependencies": {
+		"@actions/core": "^1.11.1",
+		"adm-zip": "^0.5.16"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.28.0",
+		"@babel/eslint-parser": "^7.28.0",
+		"@babel/preset-env": "^7.28.0",
+		"@vercel/ncc": "^0.38.3",
+		"prettier": "^3.6.2"
+	}
 }
