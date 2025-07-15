@@ -38,7 +38,7 @@
 	},
 	"dependencies": {
 		"@actions/core": "^1.11.1",
-		"adm-zip": "^0.5.16"
+		"@actions/tool-cache": "^2.0.1"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.28.0",
