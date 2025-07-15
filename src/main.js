@@ -117,6 +117,19 @@ async function run() {
 		await tc.extractZip(arkuixPath, sdkHome);
 		core.info("ArkUI-X extracted to " + sdkHome);
 
+		// check if arkui-x/licenses or arkui-x/LICENSE exists and if arkui-x/licenses not exists, copy LICENSE to licenses
+		const licensesPath = path.join(sdkHome, "arkui-x", "licenses");
+		if (!fs.existsSync(licensesPath)) {
+			const licensePath = path.join(sdkHome, "arkui-x", "LICENSE");
+			if (fs.existsSync(licensePath)) {
+				fs.mkdirSync(licensesPath, { recursive: true });
+				fs.copyFileSync(licensePath, path.join(licensesPath, "LICENSE"));
+			} else {
+				core.setFailed("ArkUI-X license file not found.");
+				return;
+			}
+		}
+
 		const arkuiXConfigPath = path.join(sdkHome, "arkui-x", "arkui-x.json");
 		if (!fs.existsSync(arkuiXConfigPath)) {
 			core.setFailed(
@@ -166,12 +179,34 @@ async function run() {
 			),
 		);
 
+		// copy sdkHome/sdk/default to sdkHome/sdk/HarmonyOS
+		core.info(
+			"Copying default SDK to HarmonyOS SDK directory to adapt to ACE...",
+		);
+		const sdkDefaultPath = path.join(sdkHome, "sdk", "default");
+		const sdkHarmonyOSPath = path.join(sdkHome, "sdk", "HarmonyOS");
+		if (fs.existsSync(sdkDefaultPath)) {
+			if (!fs.existsSync(sdkHarmonyOSPath)) {
+				fs.mkdirSync(sdkHarmonyOSPath, { recursive: true });
+			}
+			fs.cpSync(sdkDefaultPath, sdkHarmonyOSPath, {
+				recursive: true,
+				force: true,
+			});
+			core.info("Copied default SDK to HarmonyOS SDK directory.");
+		} else {
+			core.setFailed("Default SDK path does not exist: " + sdkDefaultPath);
+			return;
+		}
+
+		core.info("Configuring ACE...");
+
 		await exec.exec("ace", [
 			"config",
 			"--arkui-x-sdk",
 			path.join(sdkHome, "arkui-x-sdk"),
 			"--harmonyos-sdk",
-			sdkHome,
+			path.join(sdkHome, "sdk"),
 			"--nodejs-dir",
 			path.join(sdkHome, "tool/node"),
 			"--ohpm-dir",
