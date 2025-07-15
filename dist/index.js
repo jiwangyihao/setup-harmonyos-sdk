@@ -6012,7 +6012,9 @@ async function run() {
 		const mappedOS = osmap[os.platform()];
 
 		if (!assets || assets.length === 0) {
-			core.setFailed("No assets found in the latest release.");
+			core.setFailed(
+				"No assets found in the latest release. Perhaps hit the rate limit?",
+			);
 			return;
 		}
 
@@ -6077,6 +6079,20 @@ async function run() {
 		await exec.exec("ohpm", ["config", "set", "strict_ssl", "false"]);
 
 		core.info("HarmonyOS SDK setup completed successfully.");
+
+		core.info("Downloading ArkUIX...");
+		const arkuixPath = await tc.downloadTool(
+			"https://repo.huaweicloud.com/arkui-crossplatform/sdk/5.0.5.111/darwin/arkui-x-darwin-x64-5.0.5.111-Release.zip",
+		);
+
+		core.info("Extracting ArkUIX...");
+		await tc.extractZip(arkuixPath, sdkHome);
+		core.info("ArkUIX extracted to " + sdkHome);
+
+		core.info("Setting up ArkUIX environment...");
+		core.exportVariable("ARKUIX_HOME", path.join(sdkHome, "arkui-x"));
+		core.addPath(path.join(sdkHome, "arkui-x/toolchains/bin"));
+		core.info("ArkUIX setup completed successfully.");
 	} catch (error) {
 		core.setFailed(error.message);
 	}
