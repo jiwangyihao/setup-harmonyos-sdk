@@ -1,8 +1,9 @@
 const core = require("@actions/core");
 const tc = require("@actions/tool-cache"); // 引入 @actions/tool-cache
+const exec = require("@actions/exec");
 const os = require("node:os");
 const path = require("node:path");
-const exec = require("@actions/exec");
+const fs = require("node:fs");
 
 // os.platform() 返回 'darwin', 'linux' 等
 const osmap = {
@@ -109,23 +110,66 @@ async function run() {
 
 		const url_arkuix = asset_arkuix.browser_download_url;
 
-		core.info("Downloading ArkUI-X...");
+		core.info("Downloading ArkUI-X SDK from " + url_arkuix + "...");
 		const arkuixPath = await tc.downloadTool(url_arkuix);
 
-		core.info("Extracting ArkUI-X...");
+		core.info("Extracting ArkUI-X SDK...");
 		await tc.extractZip(arkuixPath, sdkHome);
 		core.info("ArkUI-X extracted to " + sdkHome);
 
+		const arkuiXConfigPath = path.join(sdkHome, "arkui-x", "arkui-x.json");
+		if (!fs.existsSync(arkuiXConfigPath)) {
+			core.setFailed(
+				"ArkUI-X configuration file not found: " + arkuiXConfigPath,
+			);
+			return;
+		}
+
+		const arkuiXConfig = JSON.parse(fs.readFileSync(arkuiXConfigPath, "utf8"));
+		if (!arkuiXConfig || !arkuiXConfig.apiVersion) {
+			core.setFailed("Invalid ArkUI-X configuration file.");
+			return;
+		}
+
+		core.info(`ArkUI-X API Version: ${arkuiXConfig.apiVersion}`);
+
+		const arkuixVersionedPath = path.join(
+			sdkHome,
+			"arkui-x-sdk",
+			arkuiXConfig.apiVersion,
+			"arkui-x",
+		);
+		if (!fs.existsSync(arkuixVersionedPath)) {
+			fs.mkdirSync(arkuixVersionedPath, { recursive: true });
+		}
+
+		const arkuixSourcePath = path.join(sdkHome, "arkui-x");
+		if (fs.existsSync(arkuixSourcePath)) {
+			fs.renameSync(arkuixSourcePath, arkuixVersionedPath);
+		} else {
+			core.setFailed("ArkUI-X source path does not exist: " + arkuixSourcePath);
+			return;
+		}
+
+		// Set up ArkUI-X environment
 		core.info("Setting up ArkUI-X environment...");
-		core.exportVariable("ARKUIX_HOME", path.join(sdkHome, "arkui-x"));
-		core.addPath(path.join(sdkHome, "arkui-x/toolchains/bin"));
+		core.exportVariable(
+			"ARKUIX_HOME",
+			path.join(sdkHome, "arkui-x-sdk", arkuiXConfig.apiVersion, "arkui-x"),
+		);
+		core.addPath(
+			path.join(
+				sdkHome,
+				"arkui-x-sdk",
+				arkuiXConfig.apiVersion,
+				"arkui-x/toolchains/bin",
+			),
+		);
 
 		await exec.exec("ace", [
 			"config",
 			"--arkui-x-sdk",
-			path.join(sdkHome, "arkui-x"),
-			"--openharmony-sdk",
-			path.join(sdkHome, "sdk/default/openharmony"),
+			path.join(sdkHome, "arkui-x-sdk"),
 			"--harmonyos-sdk",
 			sdkHome,
 			"--nodejs-dir",
