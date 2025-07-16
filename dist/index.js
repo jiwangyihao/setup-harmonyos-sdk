@@ -6251,6 +6251,24 @@ async function run() {
 		}
 		core.info("ArkUI-X environment setup completed successfully.");
 
+		// copy sdkRoot/Contents/tools/sdk to sdkRoot/Contents/sdk
+		core.info("Copying SDK to Contents directory to adapt to ACE...");
+		const sdkContentsPath = path.join(sdkRoot, "Contents", "sdk");
+		if (!fs.existsSync(sdkContentsPath)) {
+			fs.mkdirSync(sdkContentsPath, { recursive: true });
+		}
+		const sdkSourcePath = path.join(sdkHome, "sdk");
+		if (fs.existsSync(sdkSourcePath)) {
+			fs.cpSync(sdkSourcePath, sdkContentsPath, {
+				recursive: true,
+				force: true,
+			});
+			core.info("SDK copied to Contents directory.");
+		} else {
+			core.setFailed("SDK source path does not exist: " + sdkSourcePath);
+			return;
+		}
+
 		// copy sdkHome/sdk/default to sdkHome/sdk/HarmonyOS
 		core.info(
 			"Copying default SDK to HarmonyOS SDK directory to adapt to ACE...",
