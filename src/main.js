@@ -12,7 +12,7 @@ const osmap = {
 };
 
 const sdkRoot = path.join(os.homedir(), "harmonyos-sdk");
-const sdkHome = path.join(sdkRoot, "command-line-tools");
+const sdkHome = path.join(sdkRoot, "Contents", "tools");
 const sdkBin = path.join(sdkHome, "bin");
 
 async function run() {
@@ -219,6 +219,32 @@ async function run() {
 			return;
 		}
 
+		// Check if sdkRoot/Contents/MacOS exists, if not create it. Then create sdkRoot/Contents/MacOS/devecostudio excutable
+		const sdkContentsMacOSPath = path.join(sdkRoot, "Contents", "MacOS");
+		if (!fs.existsSync(sdkContentsMacOSPath)) {
+			fs.mkdirSync(sdkContentsMacOSPath, { recursive: true });
+			core.info("Created MacOS directory in Contents.");
+		}
+
+		// Create sdkRoot/Contents/MacOS/devecoStudio executable
+		const sdkDevecoStudioPath = path.join(sdkContentsMacOSPath, "devecoStudio");
+		if (!fs.existsSync(sdkDevecoStudioPath)) {
+			fs.writeFileSync(
+				sdkDevecoStudioPath,
+				"#!/bin/bash\necho 'Hello from devecoStudio'",
+			);
+			fs.chmodSync(sdkDevecoStudioPath, 0o755);
+			core.info(
+				"Created fake devecoStudio executable in MacOS for ace compatibility.",
+			);
+		}
+
+		// Install dependencies
+		core.info("Installing dependencies...");
+		await exec.exec("brew", ["install", "libimobiledevice"]);
+		await exec.exec("brew", ["install", "ios-deploy"]);
+		core.info("Dependencies installed successfully.");
+
 		core.info("Configuring ACE...");
 
 		await exec.exec("ace", [
@@ -231,6 +257,8 @@ async function run() {
 			path.join(sdkHome, "tool/node"),
 			"--ohpm-dir",
 			path.join(sdkHome, "ohpm"),
+			"--deveco-studio-path",
+			path.join(sdkRoot),
 		]);
 
 		await exec.exec("ace", ["check", "-v"]);
