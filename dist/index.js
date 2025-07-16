@@ -6045,6 +6045,27 @@ async function run() {
 		await tc.extractZip(sdkZipPath, sdkRoot);
 		core.info("SDK downloaded and extracted to " + sdkRoot);
 
+		// mv sdkRoot/command-line-tools to sdkHome
+		core.info("Moving command-line-tools to SDK home directory...");
+		const sdkCommandLineToolsPath = path.join(sdkRoot, "command-line-tools");
+		if (!fs.existsSync(sdkCommandLineToolsPath)) {
+			core.setFailed(
+				"Command line tools directory not found: " + sdkCommandLineToolsPath,
+			);
+			return;
+		}
+
+		if (!fs.existsSync(sdkHome)) {
+			fs.mkdirSync(sdkHome, { recursive: true });
+		}
+
+		fs.renameSync(sdkCommandLineToolsPath, sdkHome);
+		core.info("Moved command-line-tools to " + sdkHome);
+
+		if (!fs.existsSync(sdkBin)) {
+			fs.mkdirSync(sdkBin, { recursive: true });
+		}
+
 		core.info("Setting up HarmonyOS SDK environment...");
 		core.setOutput("sdk-path", sdkHome);
 		core.exportVariable("HOS_SDK_HOME", sdkHome);
