@@ -173,21 +173,23 @@ async function run() {
 			return;
 		}
 
-		// copy apkui-x-sdk/apiVersion/arkui-x to arkui-x-sdk/arkui-x
-		core.info("Copying ArkUI-X SDK to target directory...");
-		const arkuixTargetPath = path.join(sdkHome, "arkui-x-sdk", "arkui-x");
-		if (fs.existsSync(arkuixVersionedPath)) {
-			if (!fs.existsSync(arkuixTargetPath)) {
-				fs.mkdirSync(arkuixTargetPath, { recursive: true });
+		// copy apkui-x-sdk/apiVersion/arkui-x/arkui-x.json to arkui-x-sdk/arkui-x/arkui-x.json (make sure the directory exists)
+		const arkuixJsonSourcePath = path.join(arkuixVersionedPath, "arkui-x.json");
+		const arkuixJsonDestPath = path.join(
+			sdkHome,
+			"arkui-x-sdk",
+			"arkui-x",
+			"arkui-x.json",
+		);
+		if (fs.existsSync(arkuixJsonSourcePath)) {
+			if (!fs.existsSync(path.dirname(arkuixJsonDestPath))) {
+				fs.mkdirSync(path.dirname(arkuixJsonDestPath), { recursive: true });
 			}
-			fs.cpSync(arkuixVersionedPath, arkuixTargetPath, {
-				recursive: true,
-				force: true,
-			});
-			core.info("Copied ArkUI-X SDK to target directory.");
+			fs.copyFileSync(arkuixJsonSourcePath, arkuixJsonDestPath);
+			core.info("Copied ArkUI-X configuration to " + arkuixJsonDestPath);
 		} else {
 			core.setFailed(
-				"ArkUI-X versioned path does not exist: " + arkuixVersionedPath,
+				"ArkUI-X configuration file not found: " + arkuixJsonSourcePath,
 			);
 			return;
 		}
