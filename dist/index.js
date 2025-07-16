@@ -6160,25 +6160,25 @@ async function run() {
 		}
 
 		// copy apkui-x-sdk/apiVersion/arkui-x/arkui-x.json to arkui-x-sdk/arkui-x/arkui-x.json (make sure the directory exists)
-		const arkuixJsonSourcePath = path.join(arkuixVersionedPath, "arkui-x.json");
-		const arkuixJsonDestPath = path.join(
-			sdkHome,
-			"arkui-x-sdk",
-			"arkui-x",
-			"arkui-x.json",
-		);
-		if (fs.existsSync(arkuixJsonSourcePath)) {
-			if (!fs.existsSync(path.dirname(arkuixJsonDestPath))) {
-				fs.mkdirSync(path.dirname(arkuixJsonDestPath), { recursive: true });
-			}
-			fs.copyFileSync(arkuixJsonSourcePath, arkuixJsonDestPath);
-			core.info("Copied ArkUI-X configuration to " + arkuixJsonDestPath);
-		} else {
-			core.setFailed(
-				"ArkUI-X configuration file not found: " + arkuixJsonSourcePath,
-			);
-			return;
-		}
+		// const arkuixJsonSourcePath = path.join(arkuixVersionedPath, "arkui-x.json");
+		// const arkuixJsonDestPath = path.join(
+		// 	sdkHome,
+		// 	"arkui-x-sdk",
+		// 	"arkui-x",
+		// 	"arkui-x.json",
+		// );
+		// if (fs.existsSync(arkuixJsonSourcePath)) {
+		// 	if (!fs.existsSync(path.dirname(arkuixJsonDestPath))) {
+		// 		fs.mkdirSync(path.dirname(arkuixJsonDestPath), { recursive: true });
+		// 	}
+		// 	fs.copyFileSync(arkuixJsonSourcePath, arkuixJsonDestPath);
+		// 	core.info("Copied ArkUI-X configuration to " + arkuixJsonDestPath);
+		// } else {
+		// 	core.setFailed(
+		// 		"ArkUI-X configuration file not found: " + arkuixJsonSourcePath,
+		// 	);
+		// 	return;
+		// }
 
 		// check if arkui-x-sdk/licenses exists and create it if not, then write 'eb3d7b5485466acbd81f2b496f595ab637d2792e268206b27d99e793bdb67549' to arkui-x-sdk/licenses/LICENSE.sha256
 		const sdkArkuixLicensesPath = path.join(sdkHome, "arkui-x-sdk", "licenses");
