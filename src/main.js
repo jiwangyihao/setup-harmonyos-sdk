@@ -174,23 +174,23 @@ async function run() {
 		}
 
 		// copy apkui-x-sdk/apiVersion/arkui-x to arkui-x-sdk/arkui-x
-		// core.info("Copying ArkUI-X SDK to target directory...");
-		// const arkuixTargetPath = path.join(sdkHome, "arkui-x-sdk", "arkui-x");
-		// if (fs.existsSync(arkuixVersionedPath)) {
-		// 	if (!fs.existsSync(arkuixTargetPath)) {
-		// 		fs.mkdirSync(arkuixTargetPath, { recursive: true });
-		// 	}
-		// 	fs.cpSync(arkuixVersionedPath, arkuixTargetPath, {
-		// 		recursive: true,
-		// 		force: true,
-		// 	});
-		// 	core.info("Copied ArkUI-X SDK to target directory.");
-		// } else {
-		// 	core.setFailed(
-		// 		"ArkUI-X versioned path does not exist: " + arkuixVersionedPath,
-		// 	);
-		// 	return;
-		// }
+		core.info("Copying ArkUI-X SDK to target directory...");
+		const arkuixTargetPath = path.join(sdkHome, "arkui-x-sdk", "arkui-x");
+		if (fs.existsSync(arkuixVersionedPath)) {
+			if (!fs.existsSync(arkuixTargetPath)) {
+				fs.mkdirSync(arkuixTargetPath, { recursive: true });
+			}
+			fs.cpSync(arkuixVersionedPath, arkuixTargetPath, {
+				recursive: true,
+				force: true,
+			});
+			core.info("Copied ArkUI-X SDK to target directory.");
+		} else {
+			core.setFailed(
+				"ArkUI-X versioned path does not exist: " + arkuixVersionedPath,
+			);
+			return;
+		}
 
 		// check if arkui-x-sdk/licenses exists and create it if not, then write 'eb3d7b5485466acbd81f2b496f595ab637d2792e268206b27d99e793bdb67549' to arkui-x-sdk/licenses/LICENSE.sha256
 		const sdkArkuixLicensesPath = path.join(sdkHome, "arkui-x-sdk", "licenses");
