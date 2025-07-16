@@ -6222,6 +6222,35 @@ async function run() {
 			),
 		);
 
+		// chmod +x sdkHome/arkui-x-sdk/apiVersion/arkui-x/toolchains/bin/*
+		core.info(
+			"Setting executable permissions for ArkUI-X toolchain binaries...",
+		);
+		const toolchainsBinPath = path.join(
+			sdkHome,
+			"arkui-x-sdk",
+			arkuiXConfig.apiVersion,
+			"arkui-x",
+			"toolchains",
+			"bin",
+		);
+		if (fs.existsSync(toolchainsBinPath)) {
+			const files = fs.readdirSync(toolchainsBinPath);
+			for (const file of files) {
+				const filePath = path.join(toolchainsBinPath, file);
+				if (fs.statSync(filePath).isFile()) {
+					fs.chmodSync(filePath, 0o755);
+				}
+			}
+			core.info("Set executable permissions for ArkUI-X toolchain binaries.");
+		} else {
+			core.setFailed(
+				"Toolchains bin directory does not exist: " + toolchainsBinPath,
+			);
+			return;
+		}
+		core.info("ArkUI-X environment setup completed successfully.");
+
 		// copy sdkHome/sdk/default to sdkHome/sdk/HarmonyOS
 		core.info(
 			"Copying default SDK to HarmonyOS SDK directory to adapt to ACE...",
