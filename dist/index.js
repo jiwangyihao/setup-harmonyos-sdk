@@ -6178,11 +6178,24 @@ async function run() {
 		// 	return;
 		// }
 
-		// check if arkui-x-sdk/licenses exists and create it if not
+		// check if arkui-x-sdk/licenses exists and create it if not, then write 'eb3d7b5485466acbd81f2b496f595ab637d2792e268206b27d99e793bdb67549' to arkui-x-sdk/licenses/LICENSE.sha256
 		const sdkArkuixLicensesPath = path.join(sdkHome, "arkui-x-sdk", "licenses");
 		if (!fs.existsSync(sdkArkuixLicensesPath)) {
 			fs.mkdirSync(sdkArkuixLicensesPath, { recursive: true });
 			core.info("Created licenses directory for ArkUI-X SDK.");
+		}
+		const licenseSha256Path = path.join(
+			sdkArkuixLicensesPath,
+			"LICENSE.sha256",
+		);
+		if (!fs.existsSync(licenseSha256Path)) {
+			fs.writeFileSync(
+				licenseSha256Path,
+				"eb3d7b5485466acbd81f2b496f595ab637d2792e268206b27d99e793bdb67549",
+			);
+			core.info("Wrote license SHA256 to " + licenseSha256Path);
+		} else {
+			core.info("License SHA256 file already exists: " + licenseSha256Path);
 		}
 
 		// check if sdkHome/sdk/licenses exists and create it if not
