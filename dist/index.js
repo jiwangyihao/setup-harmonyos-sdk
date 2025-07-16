@@ -6070,6 +6070,7 @@ async function run() {
 		core.setOutput("sdk-path", sdkHome);
 		core.exportVariable("HOS_SDK_HOME", sdkHome);
 		core.exportVariable("COMMANDLINE_TOOL_DIR", sdkHome);
+		core.exportVariable("DEVECO_SDK_HOME", sdkRoot);
 		core.addPath(sdkBin);
 
 		core.exportVariable("NODE_HOME", path.join(sdkHome, "tool/node"));
