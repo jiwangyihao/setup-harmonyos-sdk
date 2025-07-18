@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> **推荐一下本人的实践课作品：基于 ArkUI-X 的跨平台游戏化叙事驱动番茄钟应用[逐火 FlameChase](https://github.com/jiwangyihao/FlameChase)。**
+>
+> 其中包含使用本工作流的[完整构建示例](https://github.com/jiwangyihao/FlameChase/blob/master/.github/workflows/ci.yml)，可供参考。
+
 # HarmonyOS GitHub Action setup
 
 [![GitHub Super-Linter](https://github.com/actions/javascript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
